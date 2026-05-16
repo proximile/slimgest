@@ -97,3 +97,42 @@ def _invoke_isolated_cli_runner(args: list[str]) -> Result:
         kwargs["mix_stderr"] = False  # Click 8.0-8.1
     runner = CliRunner(**kwargs)
     return runner.invoke(main, args)
+
+
+def test_cli_folder_truncation_collapses_oversized_dir(tmp_path: Path) -> None:
+    """End-to-end CLI check that --max-folder-children collapses a fat folder."""
+    fat = tmp_path / "fat_repo"
+    fat.mkdir()
+    for i in range(25):
+        (fat / f"file_{i:02d}.txt").write_text(f"content {i}\n")
+
+    result = _invoke_isolated_cli_runner(
+        [
+            str(fat),
+            "--output",
+            "-",
+            "--max-folder-children",
+            "5",
+            "--folder-truncate-mode",
+            "middle",
+        ],
+    )
+
+    assert result.exit_code == 0, f"stderr: {result.stderr}"
+    # Tree marker present.
+    assert "items collapsed" in result.stdout
+    # Content-section marker present and references the parent dir.
+    assert "items collapsed in fat_repo/" in result.stdout
+    # Early and late files survive; a middle file is gone.
+    assert "file_00.txt" in result.stdout
+    assert "file_24.txt" in result.stdout
+    assert "file_12.txt" not in result.stdout
+
+
+def test_cli_folder_truncation_rejects_invalid_mode(tmp_path: Path) -> None:
+    """Click should reject an unknown truncation mode before we ever run."""
+    result = _invoke_isolated_cli_runner(
+        [str(tmp_path), "--max-folder-children", "5", "--folder-truncate-mode", "bogus"],
+    )
+    assert result.exit_code != 0
+    assert "Invalid value" in result.stderr or "Invalid value" in result.output

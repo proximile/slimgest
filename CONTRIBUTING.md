@@ -1,35 +1,38 @@
-# Contributing to Gitingest
+# Contributing to slimgest
 
-Thanks for your interest in contributing to **Gitingest** 🚀 Our goal is to keep the codebase friendly to first-time
-contributors.
-If you ever get stuck, reach out on [Discord](https://discord.com/invite/zerRaGK9EC).
-
----
-
-## How to Contribute (non-technical)
-
-- **Create an Issue** – found a bug or have a feature idea?
-  [Open an issue](https://github.com/coderamp-labs/gitingest/issues/new).
-- **Spread the Word** – tweet, blog, or tell a friend.
-- **Use Gitingest** – real-world usage gives the best feedback. File issues or ping us
-  on [Discord](https://discord.com/invite/zerRaGK9EC) with anything you notice.
+Thanks for your interest in contributing to **slimgest**. slimgest is a
+[Proximile LLC](https://proximile.llc) fork of
+[gitingest](https://github.com/coderamp-labs/gitingest); we aim to keep
+the contribution path friendly to first-time contributors.
 
 ---
 
-## How to submit a Pull Request
+## Non-technical ways to contribute
 
-> **Prerequisites**: The project uses **Python 3.9+** and `pre-commit` for development.
+- **File an issue** for bugs or feature ideas:
+  [open an issue](https://github.com/proximile/slimgest/issues/new) on
+  this repository.
+- **Use slimgest** on your own repos and report what worked or didn't —
+  real-world feedback is the most valuable kind.
+- If the bug exists in upstream gitingest too, consider also filing it
+  upstream at
+  [coderamp-labs/gitingest](https://github.com/coderamp-labs/gitingest)
+  so all downstream forks benefit.
 
-1. **Fork** the repository.
+---
 
-2. **Clone** your fork:
+## Submitting a pull request
+
+> **Prerequisites:** Python 3.9+ and `pre-commit` for the linter hooks.
+
+1. **Fork** this repository and **clone** your fork:
 
    ```bash
-   git clone https://github.com/coderamp-labs/gitingest.git
-   cd gitingest
+   git clone https://github.com/<your-handle>/slimgest.git
+   cd slimgest
    ```
 
-3. **Set up the dev environment**:
+2. **Set up the dev environment**:
 
    ```bash
    python -m venv .venv
@@ -38,60 +41,50 @@ If you ever get stuck, reach out on [Discord](https://discord.com/invite/zerRaGK
    pre-commit install
    ```
 
-4. **Create a branch** for your changes:
+3. **Create a branch** for your changes:
 
    ```bash
    git checkout -b your-branch
    ```
 
-5. **Make your changes** (and add tests when relevant).
+4. **Make your changes** and add tests where relevant.
 
-6. **Stage** the changes:
-
-   ```bash
-   git add .
-   ```
-
-7. **Run the backend test suite**:
+5. **Run the test suite**:
 
    ```bash
    pytest
    ```
 
-8. *(Optional)* **Run `pre-commit` on all files** to check hooks without committing:
+6. *(Optional)* **Run `pre-commit` on all files** to check hooks without
+   committing:
 
    ```bash
    pre-commit run --all-files
    ```
 
-9. **Run the local server** to sanity-check:
+7. **Commit** with a clear message:
 
-    ```bash
-    python -m server
-    ```
+   ```bash
+   git commit -m "feat: short description"
+   ```
 
-   Open [http://localhost:8000](http://localhost:8000) to confirm everything works.
+8. **Push** your branch and open a pull request against `main` on
+   `proximile/slimgest`:
 
-10. **Commit** (signed):
+   ```bash
+   git push origin your-branch
+   ```
 
-    ```bash
-    git commit -S -m "Your commit message"
-    ```
+   Pull request titles should follow the
+   [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+   specification — this keeps the changelog readable.
 
-    If *pre-commit* complains, fix the problems and repeat **5 – 9**.
+9. **Iterate** on review feedback.
 
-11. **Push** your branch:
+## Pulling in upstream changes
 
-    ```bash
-    git push origin your-branch
-    ```
-
-12. **Open a pull request** on GitHub with a clear description.
-
-    > **Important:** Pull request titles **must follow
-    the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification**. This helps with
-    changelogs and automated releases.
-
-13. **Iterate** on any review feedback—update your branch and repeat **6 – 11** as needed.
-
-*(Optional) Invite a maintainer to your branch for easier collaboration.*
+slimgest tracks upstream gitingest. When upstream lands a change that
+also belongs here, the maintainers will rebase or cherry-pick it onto
+slimgest's `main`. Contributors don't need to do this manually — just
+make sure your PR description notes if it's a port of an upstream change
+so we don't accidentally duplicate it.

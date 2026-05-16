@@ -1,10 +1,10 @@
 {
     "configurations": [
         {
-            "name": "Python Debugger: Module",
+            "name": "Python Debugger: gitingest CLI",
             "type": "debugpy",
             "request": "launch",
-            "module": "server",
+            "module": "gitingest",
             "args": [],
             "cwd": "${workspaceFolder}/src"
         }

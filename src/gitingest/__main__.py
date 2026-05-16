@@ -11,12 +11,20 @@ from typing_extensions import Unpack
 
 from gitingest.config import MAX_FILE_SIZE, OUTPUT_FILE_NAME
 from gitingest.entrypoint import ingest_async
+from gitingest.output_formatter import (
+    TRUNC_END,
+    TRUNC_ENDS_AND_MIDDLE,
+    TRUNC_MIDDLE,
+    FolderTruncateConfig,
+)
 
 # Import logging configuration first to intercept all logging
 from gitingest.utils.logging_config import get_logger
 
 # Initialize logger for this module
 logger = get_logger(__name__)
+
+_FOLDER_TRUNCATE_MODES = (TRUNC_MIDDLE, TRUNC_END, TRUNC_ENDS_AND_MIDDLE)
 
 
 class _CLIArgs(TypedDict):
@@ -29,6 +37,9 @@ class _CLIArgs(TypedDict):
     include_submodules: bool
     token: str | None
     output: str | None
+    max_folder_children: int | None
+    folder_truncate_mode: str
+    folder_truncate_keep: int | None
 
 
 @click.command()
@@ -75,6 +86,36 @@ class _CLIArgs(TypedDict):
     "-o",
     default=None,
     help="Output file path (default: digest.txt in current directory). Use '-' for stdout.",
+)
+@click.option(
+    "--max-folder-children",
+    type=int,
+    default=None,
+    help=(
+        "Collapse any directory with more than this many direct children. "
+        "Omit to disable folder truncation."
+    ),
+)
+@click.option(
+    "--folder-truncate-mode",
+    type=click.Choice(_FOLDER_TRUNCATE_MODES, case_sensitive=False),
+    default=TRUNC_MIDDLE,
+    show_default=True,
+    help=(
+        "How to collapse oversized directories: "
+        "'middle' keeps the first and last entries (1 gap), "
+        "'end' keeps only the first entries (1 gap at the tail), "
+        "'ends-and-middle' keeps first + middle + last entries (2 gaps)."
+    ),
+)
+@click.option(
+    "--folder-truncate-keep",
+    type=int,
+    default=None,
+    help=(
+        "Number of children to keep visible in a collapsed directory. "
+        "Defaults to --max-folder-children."
+    ),
 )
 def main(**cli_kwargs: Unpack[_CLIArgs]) -> None:
     """Run the CLI entry point to analyze a repo / directory and dump its contents.
@@ -125,6 +166,9 @@ async def _async_main(
     include_submodules: bool = False,
     token: str | None = None,
     output: str | None = None,
+    max_folder_children: int | None = None,
+    folder_truncate_mode: str = TRUNC_MIDDLE,
+    folder_truncate_keep: int | None = None,
 ) -> None:
     """Analyze a directory or repository and create a text dump of its contents.
 
@@ -154,6 +198,16 @@ async def _async_main(
     output : str | None
         The path where the output file will be written (default: ``digest.txt`` in current directory).
         Use ``"-"`` to write to ``stdout``.
+    max_folder_children : int | None
+        If set, collapse any directory with more than this many direct children
+        in both the tree and the file-contents output. ``None`` disables folder
+        truncation.
+    folder_truncate_mode : str
+        Which collapse layout to use: ``"middle"``, ``"end"``, or
+        ``"ends-and-middle"``. Only relevant when ``max_folder_children`` is set.
+    folder_truncate_keep : int | None
+        Number of children to keep visible in a collapsed directory. Defaults to
+        ``max_folder_children`` when ``None``.
 
     Raises
     ------
@@ -173,6 +227,14 @@ async def _async_main(
         else:
             click.echo(f"Analyzing source, output will be written to '{output_target}'...", err=True)
 
+        folder_truncate: FolderTruncateConfig | None = None
+        if max_folder_children is not None:
+            folder_truncate = FolderTruncateConfig(
+                threshold=max_folder_children,
+                keep=folder_truncate_keep,
+                mode=folder_truncate_mode.lower(),
+            )
+
         summary, _, _ = await ingest_async(
             source,
             max_file_size=max_size,
@@ -183,6 +245,7 @@ async def _async_main(
             include_submodules=include_submodules,
             token=token,
             output=output_target,
+            folder_truncate=folder_truncate,
         )
     except Exception as exc:
         # Convert any exception into Click.Abort so that exit status is non-zero

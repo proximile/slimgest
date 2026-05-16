@@ -1,18 +1,16 @@
 [project]
-name = "gitingest"
-version = "0.3.1"
-description="CLI tool to analyze and create text dumps of codebases for LLMs"
+name = "slimgest"
+version = "0.4.0"
+description="A fork of gitingest that intelligently collapses oversized folders so big repos fit in an LLM context window."
 readme = {file = "README.md", content-type = "text/markdown" }
 requires-python = ">= 3.8"
 dependencies = [
     "click>=8.0.0",
     "gitpython>=3.1.0",
-    "httpx",
     "loguru>=0.7.0",
     "pathspec>=0.12.1",
     "pydantic",
-    "python-dotenv",
-    "starlette>=0.40.0",  # Minimum safe release (https://osv.dev/vulnerability/GHSA-f96h-pmfr-66vw)
+    "requests",
     "strenum; python_version < '3.11'",
     "tiktoken>=0.7.0",  # Support for o200k_base encoding
     "typing_extensions>= 4.0.0; python_version < '3.10'",
@@ -22,6 +20,9 @@ license = {file = "LICENSE"}
 authors = [
     { name = "Romain Courtois", email = "romain@coderamp.io" },
     { name = "Filip Christiansen"},
+]
+maintainers = [
+    { name = "Proximile LLC" },
 ]
 classifiers=[
     "Development Status :: 3 - Alpha",
@@ -44,21 +45,14 @@ dev = [
     "pytest-mock",
 ]
 
-server = [
-    "boto3>=1.28.0",  # AWS SDK for S3 support
-    "fastapi[standard]>=0.109.1",  # Minimum safe release (https://osv.dev/vulnerability/PYSEC-2024-38)
-    "prometheus-client",
-    "sentry-sdk[fastapi]",
-    "slowapi",
-    "uvicorn>=0.11.7",  # Minimum safe release (https://osv.dev/vulnerability/PYSEC-2020-150)
-]
-
 [project.scripts]
 gitingest = "gitingest.__main__:main"
+slimgest = "gitingest.__main__:main"
 
 [project.urls]
-homepage = "https://gitingest.com"
-github = "https://github.com/coderamp-labs/gitingest"
+homepage = "https://github.com/proximile/slimgest"
+repository = "https://github.com/proximile/slimgest"
+upstream = "https://github.com/coderamp-labs/gitingest"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]

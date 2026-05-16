@@ -12,13 +12,18 @@ from gitingest.utils.ingestion_utils import _should_exclude, _should_include
 from gitingest.utils.logging_config import get_logger
 
 if TYPE_CHECKING:
+    from gitingest.output_formatter import FolderTruncateConfig
     from gitingest.schemas import IngestionQuery
 
 # Initialize logger for this module
 logger = get_logger(__name__)
 
 
-def ingest_query(query: IngestionQuery) -> tuple[str, str, str]:
+def ingest_query(
+    query: IngestionQuery,
+    *,
+    folder_truncate: FolderTruncateConfig | None = None,
+) -> tuple[str, str, str]:
     """Run the ingestion process for a parsed query.
 
     This is the main entry point for analyzing a codebase directory or single file. It processes the query
@@ -29,6 +34,8 @@ def ingest_query(query: IngestionQuery) -> tuple[str, str, str]:
     ----------
     query : IngestionQuery
         The parsed query object containing information about the repository and query parameters.
+    folder_truncate : FolderTruncateConfig | None
+        Optional folder-truncation config applied to the formatter output.
 
     Returns
     -------
@@ -91,7 +98,7 @@ def ingest_query(query: IngestionQuery) -> tuple[str, str, str]:
                 "file_size": file_node.size,
             },
         )
-        return format_node(file_node, query=query)
+        return format_node(file_node, query=query, truncate=folder_truncate)
 
     logger.info("Processing directory", extra={"directory_path": str(path)})
 
@@ -117,7 +124,7 @@ def ingest_query(query: IngestionQuery) -> tuple[str, str, str]:
         },
     )
 
-    return format_node(root_node, query=query)
+    return format_node(root_node, query=query, truncate=folder_truncate)
 
 
 def _process_node(node: FileSystemNode, query: IngestionQuery, stats: FileSystemStats) -> None:

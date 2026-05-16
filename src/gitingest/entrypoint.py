@@ -26,6 +26,7 @@ from gitingest.utils.query_parser_utils import KNOWN_GIT_HOSTS
 if TYPE_CHECKING:
     from types import TracebackType
 
+    from gitingest.output_formatter import FolderTruncateConfig
     from gitingest.schemas import IngestionQuery
 
 # Initialize logger for this module
@@ -44,6 +45,7 @@ async def ingest_async(
     include_submodules: bool = False,
     token: str | None = None,
     output: str | None = None,
+    folder_truncate: FolderTruncateConfig | None = None,
 ) -> tuple[str, str, str]:
     """Ingest a source and process its contents.
 
@@ -76,6 +78,10 @@ async def ingest_async(
         File path where the summary and content should be written.
         If ``"-"`` (dash), the results are written to ``stdout``.
         If ``None``, the results are not written to a file.
+    folder_truncate : FolderTruncateConfig | None
+        Optional folder-truncation config. When provided, directories whose
+        direct-child count exceeds ``threshold`` are collapsed in both the tree
+        and the file-contents output.
 
     Returns
     -------
@@ -138,7 +144,7 @@ async def ingest_async(
             _apply_gitignores(query)
 
         logger.info("Processing files and generating output")
-        summary, tree, content = ingest_query(query)
+        summary, tree, content = ingest_query(query, folder_truncate=folder_truncate)
 
         if output:
             logger.debug("Writing output to file", extra={"output_path": output})
@@ -160,6 +166,7 @@ def ingest(
     include_submodules: bool = False,
     token: str | None = None,
     output: str | None = None,
+    folder_truncate: FolderTruncateConfig | None = None,
 ) -> tuple[str, str, str]:
     """Provide a synchronous wrapper around ``ingest_async``.
 
@@ -192,6 +199,10 @@ def ingest(
         File path where the summary and content should be written.
         If ``"-"`` (dash), the results are written to ``stdout``.
         If ``None``, the results are not written to a file.
+    folder_truncate : FolderTruncateConfig | None
+        Optional folder-truncation config. When provided, directories whose
+        direct-child count exceeds ``threshold`` are collapsed in both the tree
+        and the file-contents output.
 
     Returns
     -------
@@ -218,6 +229,7 @@ def ingest(
             include_submodules=include_submodules,
             token=token,
             output=output,
+            folder_truncate=folder_truncate,
         ),
     )
 

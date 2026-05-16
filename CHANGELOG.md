@@ -1,5 +1,61 @@
 # Changelog
 
+This file tracks slimgest's own history. Entries below the
+`# Upstream history (gitingest)` marker preserve the upstream
+`coderamp-labs/gitingest` changelog as it stood at the fork point —
+they are not slimgest changes.
+
+## [0.4.0] - 2026-05-16
+
+slimgest fork of `coderamp-labs/gitingest` (forked at upstream
+[`v0.3.1`](https://github.com/coderamp-labs/gitingest/releases/tag/v0.3.1)).
+
+### Added
+
+- **Folder truncation**: collapse oversized directories in both the
+  directory tree and the file-contents output. New `FolderTruncateConfig`
+  in `gitingest.output_formatter` with three modes (`middle`, `end`,
+  `ends-and-middle`); plumbed through `ingest`, `ingest_async`, and
+  `ingest_query`.
+- **CLI flags** for the truncation feature:
+  `--max-folder-children`, `--folder-truncate-mode`,
+  `--folder-truncate-keep`.
+- **`slimgest` console script** as an alias for `gitingest` — both names
+  invoke the same CLI entry point. The Python import name remains
+  `gitingest` for drop-in compatibility.
+
+### Changed
+
+- Project distribution renamed from `gitingest` to `slimgest`.
+  Importable Python package and existing CLI command stay as `gitingest`.
+- README rewritten for slimgest with usage examples for the truncation
+  feature. Upstream credit and MIT licensing preserved.
+- `LICENSE` extended with a Proximile LLC modifications copyright line.
+  Original Romain Courtois copyright is unchanged.
+- `SECURITY.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, and the issue
+  templates point at slimgest's reporting channels (GitHub Issues and
+  Security Advisories) rather than upstream's.
+- CI surface trimmed: deployment/publish workflows tied to upstream
+  infrastructure (release-please, PyPI publish, ECR/GHCR docker
+  builds, PR preview deploys) were removed. CI, CodeQL, dependency
+  review, PR-title check, rebase-needed, scorecard, and stale-bot
+  workflows are kept.
+
+### Removed
+
+- The FastAPI server, web UI, Docker / Compose, and S3/Sentry hosting
+  hooks inherited from upstream. slimgest is currently focused on the
+  CLI and Python API; a hosted variant is on the roadmap but not part of
+  this release. Users who want the web UI should run upstream gitingest.
+- `[server]` optional-dependency extra in `pyproject.toml`, plus the
+  server-only runtime deps (`fastapi`, `starlette`, `httpx`,
+  `python-dotenv`, `boto3`, `prometheus-client`, `sentry-sdk`,
+  `slowapi`, `uvicorn`).
+
+---
+
+# Upstream history (gitingest)
+
 ## [0.3.1](https://github.com/coderamp-labs/gitingest/compare/v0.3.0...v0.3.1) (2025-07-31)
 
 
