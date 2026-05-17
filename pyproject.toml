@@ -6,11 +6,11 @@ readme = {file = "README.md", content-type = "text/markdown" }
 requires-python = ">= 3.11"
 dependencies = [
     "click>=8.1.8",
-    "gitpython>=3.1.43",
+    "gitpython>=3.1.50",
     "loguru>=0.7.3",
     "pathspec>=0.12.1",
     "pydantic>=2.7.4",
-    "requests>=2.32.4",
+    "requests>=2.33.0",
     "tiktoken>=0.8.0",  # Support for o200k_base encoding
 ]
 

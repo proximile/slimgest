@@ -94,17 +94,15 @@ repos:
         files: ^src/
         additional_dependencies:
           [
-            click>=8.0.0,
-            gitpython>=3.1.0,
-            loguru>=0.7.0,
+            click>=8.1.8,
+            gitpython>=3.1.50,
+            loguru>=0.7.3,
             pathspec>=0.12.1,
-            pydantic,
+            pydantic>=2.7.4,
             pytest-asyncio,
             pytest-mock,
-            requests,
-            strenum; python_version < '3.11',
-            tiktoken>=0.7.0,
-            typing_extensions>= 4.0.0; python_version < '3.10',
+            requests>=2.33.0,
+            tiktoken>=0.8.0,
           ]
 
       - id: pylint
@@ -114,17 +112,15 @@ repos:
           - --rcfile=tests/.pylintrc
         additional_dependencies:
           [
-            click>=8.0.0,
-            gitpython>=3.1.0,
-            loguru>=0.7.0,
+            click>=8.1.8,
+            gitpython>=3.1.50,
+            loguru>=0.7.3,
             pathspec>=0.12.1,
-            pydantic,
+            pydantic>=2.7.4,
             pytest-asyncio,
             pytest-mock,
-            requests,
-            strenum; python_version < '3.11',
-            tiktoken>=0.7.0,
-            typing_extensions>= 4.0.0; python_version < '3.10',
+            requests>=2.33.0,
+            tiktoken>=0.8.0,
           ]
 
   - repo: meta
