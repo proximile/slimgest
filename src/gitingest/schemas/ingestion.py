@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from pathlib import Path  # noqa: TC003 (typing-only-standard-library-import) needed for type checking (pydantic)
-from uuid import UUID  # noqa: TC003 (typing-only-standard-library-import) needed for type checking (pydantic)
+from pathlib import Path
+from uuid import UUID
 
 from pydantic import BaseModel, Field
 

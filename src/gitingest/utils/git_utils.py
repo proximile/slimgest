@@ -6,9 +6,10 @@ import asyncio
 import base64
 import re
 import sys
+from collections.abc import Generator, Iterable
 from contextlib import contextmanager
 from pathlib import Path
-from typing import TYPE_CHECKING, Final, Generator, Iterable
+from typing import TYPE_CHECKING, Final
 from urllib.parse import urlparse, urlunparse
 
 import git

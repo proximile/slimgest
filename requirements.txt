@@ -1,9 +1,9 @@
-click>=8.0.0
-gitpython>=3.1.0
-loguru>=0.7.0
+click>=8.1.8
+gitpython>=3.1.43
+loguru>=0.7.3
 pathspec>=0.12.1
-pydantic
-requests
-strenum; python_version < '3.11'
-tiktoken>=0.7.0  # Support for o200k_base encoding
-typing_extensions>=4.0.0; python_version < '3.10'
+pydantic>=2.7.4
+requests>=2.32.4
+strenum>=0.4.15; python_version < '3.11'
+tiktoken>=0.8.0  # Support for o200k_base encoding
+typing_extensions>=4.12.2; python_version < '3.10'

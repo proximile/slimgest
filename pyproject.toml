@@ -3,17 +3,17 @@ name = "slimgest"
 version = "0.4.0"
 description="A fork of gitingest that intelligently collapses oversized folders so big repos fit in an LLM context window."
 readme = {file = "README.md", content-type = "text/markdown" }
-requires-python = ">= 3.8"
+requires-python = ">= 3.10"
 dependencies = [
-    "click>=8.0.0",
-    "gitpython>=3.1.0",
-    "loguru>=0.7.0",
+    "click>=8.1.8",
+    "gitpython>=3.1.43",
+    "loguru>=0.7.3",
     "pathspec>=0.12.1",
-    "pydantic",
-    "requests",
-    "strenum; python_version < '3.11'",
-    "tiktoken>=0.7.0",  # Support for o200k_base encoding
-    "typing_extensions>= 4.0.0; python_version < '3.10'",
+    "pydantic>=2.7.4",
+    "requests>=2.32.4",
+    "strenum>=0.4.15; python_version < '3.11'",
+    "tiktoken>=0.8.0",  # Support for o200k_base encoding
+    "typing_extensions>=4.12.2; python_version < '3.11'",
 ]
 
 license = {file = "LICENSE"}
@@ -28,8 +28,6 @@ classifiers=[
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -94,6 +92,12 @@ ignore = [  # https://docs.astral.sh/ruff/rules/...
     "S108", # hardcoded-temp-file, TODO: replace with tempfile
     "BLE001", # blind-except, TODO: replace with specific exceptions
     "FAST003", # fast-api-unused-path-parameter, TODO: fix
+
+    # Stylistic — runtime-imported stdlib types we use both at runtime and in
+    # annotations; not worth the TYPE_CHECKING split.
+    "TC003",
+    "UP007", # `Union[X, Y]` is still readable and intentional here.
+    "PTH115", # `os.readlink` is fine, retains compatibility with `os.fspath` callers.
 ]
 per-file-ignores = { "tests/**/*.py" = [
     "S101",  # Skip "assert used" — pytest uses asserts.
