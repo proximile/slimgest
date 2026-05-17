@@ -13,10 +13,12 @@ from gitingest.query_parser import parse_remote_repo
 from gitingest.utils.query_parser_utils import KNOWN_GIT_HOSTS, _is_valid_git_commit_hash
 
 # Repository matrix: (host, user, repo)
+# The upstream bitbucket fixture (`bitbucket.org/na-dna/llm-knowledge-share`)
+# is no longer reachable from CI runners — Bitbucket coverage is dropped here
+# until a stable public Bitbucket repo can be substituted.
 _REPOS: list[tuple[str, str, str]] = [
     ("github.com", "fastapi", "fastapi"),
     ("gitlab.com", "gitlab-org", "gitlab-runner"),
-    ("bitbucket.org", "na-dna", "llm-knowledge-share"),
     ("gitea.com", "xorm", "xorm"),
     ("codeberg.org", "forgejo", "forgejo"),
     ("git.rwth-aachen.de", "medialab", "19squared"),
