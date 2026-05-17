@@ -7,6 +7,7 @@ and an end-to-end check through `format_node` against a real on-disk directory.
 
 from __future__ import annotations
 
+import re
 import uuid
 from pathlib import Path
 
@@ -255,7 +256,7 @@ def test_format_node_truncate_ends_and_middle_produces_two_gaps(tmp_path: Path) 
     node = _build_node(root, query)
 
     cfg = FolderTruncateConfig(threshold=6, keep=6, mode=TRUNC_ENDS_AND_MIDDLE)
-    _summary, tree, content = format_node(node, query=query, truncate=cfg)
+    _summary, _tree, content = format_node(node, query=query, truncate=cfg)
 
     # Two collapse markers in the contents section for the one fat folder.
     assert content.count("items collapsed in fat_repo/") == 2
@@ -263,8 +264,6 @@ def test_format_node_truncate_ends_and_middle_produces_two_gaps(tmp_path: Path) 
 
 def test_format_node_truncation_elision_counts_are_consistent(tmp_path: Path) -> None:
     """The numeric counts in tree elisions and content elisions must agree."""
-    import re
-
     root = _build_fat_dir(tmp_path, n_files=30)
     query = _make_query(local_path=root)
     node = _build_node(root, query)

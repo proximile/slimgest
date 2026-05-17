@@ -41,7 +41,7 @@ Three truncation modes:
 
 A directory with 12 Python files at `--max-folder-children 6 --folder-truncate-mode ends-and-middle`:
 
-```
+```text
 └── gitingest/
     ├── __init__.py
     ├── __main__.py
@@ -67,7 +67,7 @@ A directory with 12 Python files at `--max-folder-children 6 --folder-truncate-m
 
 The file-contents section is collapsed consistently with the tree:
 
-```
+```text
 ================================================
 [2 items collapsed in gitingest/]
 ================================================

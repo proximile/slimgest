@@ -47,6 +47,7 @@ class FolderTruncateConfig:
     mode: str = TRUNC_MIDDLE
 
     def __post_init__(self) -> None:
+        """Validate threshold, keep, and mode at construction time."""
         if self.threshold < 1:
             msg = f"threshold must be >= 1, got {self.threshold}"
             raise ValueError(msg)
@@ -82,49 +83,53 @@ def _truncate_children(
         return list(children)
 
     keep = config.threshold if config.keep is None else config.keep
-    n = len(children)
-    keep = min(keep, n)  # never "keep" more than we have
+    keep = min(keep, len(children))
 
     if config.mode == TRUNC_END:
-        head = children[:keep]
-        elided = n - keep
-        result: list[_ChildOrElision] = list(head)
-        if elided > 0:
-            result.append(_ElidedGroup(count=elided))
-        return result
-
+        return _truncate_end(children, keep)
     if config.mode == TRUNC_MIDDLE:
-        head_size = (keep + 1) // 2
-        tail_size = keep - head_size
-        head = children[:head_size]
-        tail = children[n - tail_size:] if tail_size > 0 else []
-        elided = n - head_size - tail_size
-        result = list(head)
-        if elided > 0:
-            result.append(_ElidedGroup(count=elided))
-        result.extend(tail)
-        return result
+        return _truncate_middle(children, keep)
+    return _truncate_ends_and_middle(children, keep)
 
-    # TRUNC_ENDS_AND_MIDDLE: split keep across head + middle + tail, centered.
-    head_size = (keep + 2) // 3
-    tail_size = (keep + 2) // 3
-    # Cap so we never over-allocate when keep is small.
-    head_size = min(head_size, keep)
-    tail_size = min(tail_size, keep - head_size)
+
+def _truncate_end(children: list[FileSystemNode], keep: int) -> list[_ChildOrElision]:
+    """Keep the first ``keep`` children; elide the rest as one trailing group."""
+    elided = len(children) - keep
+    result: list[_ChildOrElision] = list(children[:keep])
+    if elided > 0:
+        result.append(_ElidedGroup(count=elided))
+    return result
+
+
+def _truncate_middle(children: list[FileSystemNode], keep: int) -> list[_ChildOrElision]:
+    """Keep first + last children; elide the centre as a single group."""
+    n = len(children)
+    head_size = (keep + 1) // 2
+    tail_size = keep - head_size
+    elided = n - head_size - tail_size
+    result: list[_ChildOrElision] = list(children[:head_size])
+    if elided > 0:
+        result.append(_ElidedGroup(count=elided))
+    if tail_size > 0:
+        result.extend(children[n - tail_size :])
+    return result
+
+
+def _truncate_ends_and_middle(children: list[FileSystemNode], keep: int) -> list[_ChildOrElision]:
+    """Keep first + middle + last children; produce up to two elision groups.
+
+    Degrades to :func:`_truncate_middle` when the centre block would consume so
+    much of the remaining space that a two-gap layout no longer makes sense.
+    """
+    n = len(children)
+    head_size = min((keep + 2) // 3, keep)
+    tail_size = min((keep + 2) // 3, keep - head_size)
     mid_size = max(0, keep - head_size - tail_size)
 
     available_middle = n - head_size - tail_size
     if mid_size >= available_middle:
-        # Nothing left to elide once we account for the blocks; degrade gracefully
-        # to a single-gap middle truncation.
-        head = children[:head_size]
-        tail = children[n - tail_size:] if tail_size > 0 else []
-        elided = n - head_size - tail_size
-        result = list(head)
-        if elided > 0:
-            result.append(_ElidedGroup(count=elided))
-        result.extend(tail)
-        return result
+        # No real benefit to a two-gap layout — fall back to single-gap middle.
+        return _truncate_middle(children, keep)
 
     mid_center = n // 2
     mid_start = max(head_size, mid_center - mid_size // 2)
@@ -133,19 +138,17 @@ def _truncate_children(
         mid_end = n - tail_size
         mid_start = mid_end - mid_size
 
-    head = children[:head_size]
-    middle = children[mid_start:mid_end]
-    tail = children[n - tail_size:] if tail_size > 0 else []
     first_gap = mid_start - head_size
     second_gap = (n - tail_size) - mid_end
 
-    result = list(head)
+    result: list[_ChildOrElision] = list(children[:head_size])
     if first_gap > 0:
         result.append(_ElidedGroup(count=first_gap))
-    result.extend(middle)
+    result.extend(children[mid_start:mid_end])
     if second_gap > 0:
         result.append(_ElidedGroup(count=second_gap))
-    result.extend(tail)
+    if tail_size > 0:
+        result.extend(children[n - tail_size :])
     return result
 
 
@@ -282,11 +285,7 @@ def _format_content_elision(group: _ElidedGroup, *, parent: FileSystemNode) -> s
     if not parent_path or parent_path == ".":
         parent_path = parent.name or "."
     plural = "s" if group.count != 1 else ""
-    return (
-        f"{SEPARATOR}\n"
-        f"[{group.count} item{plural} collapsed in {parent_path}/]\n"
-        f"{SEPARATOR}\n"
-    )
+    return f"{SEPARATOR}\n[{group.count} item{plural} collapsed in {parent_path}/]\n{SEPARATOR}\n"
 
 
 def _create_tree_structure(

@@ -4,7 +4,7 @@ init-hook=
     sys.path.append('./src')
 
 [MESSAGES CONTROL]
-disable=missing-class-docstring,missing-function-docstring,protected-access,fixme
+disable=missing-class-docstring,missing-function-docstring,protected-access,fixme,too-few-public-methods
 
 [FORMAT]
 max-line-length=119

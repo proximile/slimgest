@@ -95,7 +95,13 @@ ignore = [  # https://docs.astral.sh/ruff/rules/...
     "BLE001", # blind-except, TODO: replace with specific exceptions
     "FAST003", # fast-api-unused-path-parameter, TODO: fix
 ]
-per-file-ignores = { "tests/**/*.py" = ["S101"] } # Skip the "assert used" warning
+per-file-ignores = { "tests/**/*.py" = [
+    "S101",  # Skip "assert used" — pytest uses asserts.
+    "D100", "D101", "D102", "D103", "D104",  # Missing docstrings — fine in tests.
+    "PLR2004", # Magic-value comparisons are fine in test assertions.
+    "TC003", # Stdlib imports at runtime — fine when tests use them at runtime too.
+    "INP001",  # Tests don't need __init__ in every directory.
+] }
 
 [tool.ruff.lint.pylint]
 max-returns = 10

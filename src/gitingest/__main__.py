@@ -91,10 +91,7 @@ class _CLIArgs(TypedDict):
     "--max-folder-children",
     type=int,
     default=None,
-    help=(
-        "Collapse any directory with more than this many direct children. "
-        "Omit to disable folder truncation."
-    ),
+    help=("Collapse any directory with more than this many direct children. Omit to disable folder truncation."),
 )
 @click.option(
     "--folder-truncate-mode",
@@ -112,10 +109,7 @@ class _CLIArgs(TypedDict):
     "--folder-truncate-keep",
     type=int,
     default=None,
-    help=(
-        "Number of children to keep visible in a collapsed directory. "
-        "Defaults to --max-folder-children."
-    ),
+    help=("Number of children to keep visible in a collapsed directory. Defaults to --max-folder-children."),
 )
 def main(**cli_kwargs: Unpack[_CLIArgs]) -> None:
     """Run the CLI entry point to analyze a repo / directory and dump its contents.
