@@ -3,7 +3,7 @@ name = "slimgest"
 version = "0.4.0"
 description="A fork of gitingest that intelligently collapses oversized folders so big repos fit in an LLM context window."
 readme = {file = "README.md", content-type = "text/markdown" }
-requires-python = ">= 3.10"
+requires-python = ">= 3.11"
 dependencies = [
     "click>=8.1.8",
     "gitpython>=3.1.43",
@@ -11,9 +11,7 @@ dependencies = [
     "pathspec>=0.12.1",
     "pydantic>=2.7.4",
     "requests>=2.32.4",
-    "strenum>=0.4.15; python_version < '3.11'",
     "tiktoken>=0.8.0",  # Support for o200k_base encoding
-    "typing_extensions>=4.12.2; python_version < '3.11'",
 ]
 
 license = {file = "LICENSE"}
@@ -28,7 +26,6 @@ classifiers=[
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",

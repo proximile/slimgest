@@ -38,7 +38,7 @@ def async_timeout(seconds: int) -> Callable[[Callable[P, Awaitable[T]]], Callabl
         async def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
             try:
                 return await asyncio.wait_for(func(*args, **kwargs), timeout=seconds)
-            except asyncio.TimeoutError as exc:
+            except TimeoutError as exc:
                 msg = f"Operation timed out after {seconds} seconds"
                 raise AsyncTimeoutError(msg) from exc
 

@@ -4,10 +4,9 @@
 from __future__ import annotations
 
 import asyncio
-from typing import TypedDict
+from typing import TypedDict, Unpack
 
 import click
-from typing_extensions import Unpack
 
 from gitingest.config import MAX_FILE_SIZE, OUTPUT_FILE_NAME
 from gitingest.entrypoint import ingest_async
