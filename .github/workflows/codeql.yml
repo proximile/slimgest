@@ -11,24 +11,14 @@
 #
 name: "CodeQL"
 
-# CodeQL uploads SARIF to the repository's code-scanning surface, which
-# requires Code Scanning to be enabled in Settings → Code security and
-# analysis. On a private repository that feature typically requires
-# GitHub Advanced Security (or a plan that includes it), so automatic
-# triggers are disabled to keep runs from failing with
-# "Code scanning is not enabled for this repository". Re-enable the
-# `push`, `pull_request`, and `schedule` triggers below once Code
-# Scanning has been turned on (or once the repo is public again on a
-# plan that includes code scanning for public repos by default).
 on:
   workflow_dispatch:
-  # push:
-  #   branches: ["main"]
-  # pull_request:
-  #   # The branches below must be a subset of the branches above
-  #   branches: ["main"]
-  # schedule:
-  #   - cron: "0 0 * * 1"
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: "0 0 * * 1"
 
 permissions:
   contents: read

@@ -1,16 +1,11 @@
 name: OSSF Scorecard
-# OSSF Scorecard requires the repository to be public to probe metadata.
-# Automatic triggers are disabled while this repo is private — re-enable
-# (uncomment the `branch_protection_rule`, `schedule`, and `push` triggers
-# below) when the repository is made public again. The workflow can still
-# be launched on demand via the "Run workflow" button on the Actions tab.
 on:
   workflow_dispatch:
-  # branch_protection_rule:
-  # schedule:
-  #   - cron: '33 11 * * 2'  # Every Tuesday at 11:33 AM UTC
-  # push:
-  #   branches: [ main ]
+  branch_protection_rule:
+  schedule:
+    - cron: '33 11 * * 2'  # Every Tuesday at 11:33 AM UTC
+  push:
+    branches: [ main ]
 
 permissions: read-all
 
